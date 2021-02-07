@@ -43,6 +43,7 @@ namespace MapleServer2.Types
         public IFieldObject<Mount> Mount;
         public IFieldObject<Pet> Pet;
         public bool IsVIP = false;
+        public bool IsGM = false;
 
         // Combat, Adventure, Lifestyle
         public int[] Trophy = new int[3] { 0, 1, 2 };
@@ -111,9 +112,9 @@ namespace MapleServer2.Types
 
         public static Player Char1(long accountId, long characterId, string name = "Char1")
         {
-            Job job = Job.Archer;
+            Job job = Job.GameMaster;
             PlayerStats stats = PlayerStats.Default();
-            StatDistribution statPointDistribution = new StatDistribution(totalStats: 18);
+            StatDistribution statPointDistribution = new StatDistribution(totalStats: 0);
             List<SkillTab> skillTabs = new List<SkillTab>
             {
                 new SkillTab(job)
@@ -160,7 +161,7 @@ namespace MapleServer2.Types
                 90200018, 90200093, 90220033, 90220012, 90220001, 90220033
                 },
                 TitleId = 10000503,
-                InsigniaId = 33,
+                InsigniaId = 18,
                 Titles = new List<int> {
                     10000569, 10000152, 10000570, 10000171, 10000196, 10000195, 10000571, 10000331, 10000190,
                     10000458, 10000465, 10000503, 10000512, 10000513, 10000514, 10000537, 10000565, 10000602,

@@ -11,9 +11,9 @@ namespace Ms2Database.Controllers
     {
         public static void CreateCharacter(long accountId, string characterName, int jobId) // Creates Character and Inventory
         {
-            using (Ms2DbContext context = new Ms2DbContext())
-            {
-                Character character = new Character() // Set default values here (Refer to character.cs for column names)
+            using Ms2DbContext context = new Ms2DbContext();
+            Character character =
+                new Character() // Set default values here (Refer to character.cs for column names)
                 {
                     AccountId = accountId,
                     Name = characterName,
@@ -29,53 +29,48 @@ namespace Ms2Database.Controllers
                     InsigniaId = 29,
                     TitleId = 10000292
                 };
-                context.Characters.Add(character);
-                context.SaveChanges();
+            context.Characters.Add(character);
+            context.SaveChanges();
 
-                InventoryManager inventory = new InventoryManager();
+            InventoryManager inventory = new InventoryManager();
 
-                character = context.Characters.First(column => column.Name.ToLower() == characterName.ToLower());
-                inventory.CreateInventory(character.CharacterId);
-            }
+            character = context.Characters.First(column => column.Name.ToLower() == characterName.ToLower());
+            InventoryManager.CreateInventory(character.CharacterId);
         }
 
         public void DeleteCharacter(long characterId)
         {
-            using (Ms2DbContext context = new Ms2DbContext())
+            using Ms2DbContext context = new Ms2DbContext();
+            Character character = context.Characters.FirstOrDefault(column => column.CharacterId == characterId);
+            if (character != null)
             {
-                Character character = context.Characters.FirstOrDefault(column => column.CharacterId == characterId);
                 context.Remove(character);
-                context.SaveChanges();
             }
+
+            context.SaveChanges();
         }
 
         public Character GetCharacterInfo(long characterId)
         {
-            using (Ms2DbContext context = new Ms2DbContext())
-            {
-                Character character = context.Characters.FirstOrDefault(column => column.CharacterId == characterId);
-                return character;
-            }
+            using Ms2DbContext context = new Ms2DbContext();
+            Character character = context.Characters.FirstOrDefault(column => column.CharacterId == characterId);
+            return character;
         }
 
         public void UpdateCharInfo(Character characterObject)
         {
-            using (Ms2DbContext context = new Ms2DbContext())
-            {
-                Character character = characterObject;
-                context.SaveChanges();
-            }
+            using Ms2DbContext context = new Ms2DbContext();
+            Character character = characterObject;
+            context.SaveChanges();
         }
 
         public List<Character> GetCharacterList(long accountId)
         {
-            using (Ms2DbContext context = new Ms2DbContext())
-            {
-                List<Character> characters = context.Characters.Include(table => table.Account)
-                                                               .Where(column => column.Account.AccountId == accountId)
-                                                               .ToList();
-                return characters;
-            }
+            using Ms2DbContext context = new Ms2DbContext();
+            List<Character> characters = context.Characters.Include(table => table.Account)
+                .Where(column => column.Account.AccountId == accountId)
+                .ToList();
+            return characters;
         }
     }
 }

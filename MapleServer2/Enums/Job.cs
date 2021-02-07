@@ -65,6 +65,7 @@ Assassin = 108x
 Runeblade = 109x
 Striker = 110x
 SoulBinder = 111x
+GameMaster = 1x
 
 Awakening Skills (+100)
 Example: ArcherSkillId = 10500X00

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Maple2Storage.Types;
 using Maple2Storage.Types.Metadata;
 using MapleServer2.Data.Static;
@@ -71,6 +72,10 @@ namespace MapleServer2.Tools
                         break;
                     }
                     MapleServer.BroadcastPacketAll(NoticePacket.Notice(args[1]));
+                    break;
+                case "gm":
+                    List<SkillMetadata> skills = SkillTab.GetJobFeatureSkills(Job.GameMaster);
+                    session.SendNotice($"GM Skills: {string.Join(",", skills)}");
                     break;
             }
         }

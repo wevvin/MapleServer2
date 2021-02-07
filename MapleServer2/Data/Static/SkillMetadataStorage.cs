@@ -30,7 +30,7 @@ namespace MapleServer2.Data.Static
         public static List<SkillMetadata> GetJobSkills(Job job = Job.None)
         {
             List<SkillMetadata> jobSkill = new List<SkillMetadata>();
-
+            
             foreach (KeyValuePair<int, SkillMetadata> skills in skill)
             {
                 if (skills.Value.Job == (int) job)

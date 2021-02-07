@@ -21,8 +21,13 @@ namespace MapleServer2.PacketHandlers.Game
             string message = packet.ReadUnicodeString();
             string recipient = packet.ReadUnicodeString();
             packet.ReadLong();
-
-            GameCommandActions.Process(session, message);
+            
+            // process commands, and hide from chat
+            if (message.StartsWith("/"))
+            {
+                GameCommandActions.Process(session, message.Substring(1));
+                return;
+            }
 
             switch (type)
             {
@@ -40,10 +45,7 @@ namespace MapleServer2.PacketHandlers.Game
                     break;
                 case ChatType.Party:
                     Party party = GameServer.PartyManager.GetPartyById(session.Player.PartyId);
-                    if (party != null)
-                    {
-                        party.BroadcastPacketParty(ChatPacket.Send(session.Player, message, type));
-                    }
+                    party?.BroadcastPacketParty(ChatPacket.Send(session.Player, message, type));
                     break;
                 case ChatType.WhisperTo:
                     Player recipientPlayer = GameServer.Storage.GetPlayerByName(recipient);

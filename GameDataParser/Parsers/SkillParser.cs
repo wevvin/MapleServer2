@@ -93,17 +93,14 @@ namespace GameDataParser.Parsers
                                 }
                             }
                         }
-                        else if (job.Attributes["code"].Value == "001")
+                        else if (job.Attributes["code"].Value == "001") // GM skills
                         {
                             XmlNode skills = job.SelectSingleNode("skills");
-
                             for (int i = 0; i < skills.ChildNodes.Count; i++)
                             {
                                 int id = int.Parse(skills.ChildNodes[i].Attributes["main"].Value);
-                                if (skills.ChildNodes[i].Attributes["sub"] != null)
-                                {
-                                    int[] sub = Array.ConvertAll(skills.ChildNodes[i].Attributes["sub"].Value.Split(","), int.Parse);
-                                }
+                                SkillMetadata skill = skillList.Find(x => x.SkillId == id); // This find the skill in the SkillList
+                                skill.Job = 999;
                             }
                         }
                     }

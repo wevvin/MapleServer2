@@ -15,11 +15,11 @@ namespace GameDataParser.Files
 
         public void Export()
         {
-            if (CheckHash())
-            {
-                Console.WriteLine($"\rSkipping {Filename}");
-                return;
-            }
+            // if (CheckHash())
+            // {
+            //     Console.WriteLine($"\rSkipping {Filename}");
+            //     return;
+            // }
 
             Serialize();
             WriteHash();
