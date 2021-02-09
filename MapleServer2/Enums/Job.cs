@@ -14,7 +14,7 @@
         Runeblade = 90,
         Striker = 100,
         SoulBinder = 110,
-        GameMaster = 999
+        GameMaster = 001
     }
 
     public enum JobCode : int

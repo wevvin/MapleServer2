@@ -4,6 +4,7 @@ using System.Numerics;
 using Maple2Storage.Types;
 using Maple2Storage.Types.Metadata;
 using MapleServer2.Data;
+using MapleServer2.Data.Static;
 using MapleServer2.Enums;
 using MapleServer2.Packets;
 using MapleServer2.Servers.Game;
@@ -29,7 +30,7 @@ namespace MapleServer2.Types
         // Job Group, according to jobgroupname.xml
         public bool Awakened { get; private set; }
         public Job Job { get; private set; }
-        public JobCode JobCode => (JobCode) ((int) Job * 10 + (Awakened ? 1 : 0));
+        public JobCode JobCode => Job == Job.GameMaster ? JobCode.GameMaster : (JobCode)((int) Job * 10 + (Awakened ? 1 : 0));
 
         // Mutable Values
         public Levels Levels { get; private set; }
@@ -110,29 +111,30 @@ namespace MapleServer2.Types
             Levels = new Levels(this, 70, 0, 0, 100, 0);
         }
 
-        public static Player Char1(long accountId, long characterId, string name = "Char1")
+        public static Player Char1(long accountId, long characterId, string name = "GM Wevvin")
         {
             Job job = Job.GameMaster;
             PlayerStats stats = PlayerStats.Default();
-            StatDistribution statPointDistribution = new StatDistribution(totalStats: 0);
+
+            SkillTab skillTab = new SkillTab(job);
+            skillTab.Skills.Add(SkillMetadataStorage.GetSkill(19900031));
+
             List<SkillTab> skillTabs = new List<SkillTab>
             {
-                new SkillTab(job)
+                skillTab
             };
 
             Player player = new Player
             {
                 SkillTabs = skillTabs,
-                StatPointDistribution = statPointDistribution,
                 MapId = 2000062,
                 AccountId = accountId,
                 CharacterId = characterId,
                 Name = name,
-                Gender = 1,
-                Motto = "Motto",
-                HomeName = "HomeName",
-                Coord = CoordF.From(2850, 2550, 1800), // Lith Harbor (2000062)
-                // Coord = CoordF.From(500, 500, 15000), // Tria
+                Gender = 0,
+                Motto = "GM",
+                HomeName = "GM",
+                Coord = CoordF.From(2850, 2550, 1800),
                 Job = job,
                 SkinColor = new SkinColor()
                 {
@@ -140,35 +142,15 @@ namespace MapleServer2.Types
                 },
                 CreationTime = DateTimeOffset.Now.ToUnixTimeSeconds() + Environment.TickCount,
                 Equips = new Dictionary<ItemSlot, Item> {
-                    { ItemSlot.ER, Item.Ear() },
-                    { ItemSlot.HR, Item.Hair() },
-                    { ItemSlot.FA, Item.Face() },
-                    { ItemSlot.FD, Item.FaceDecoration() }
+                    { ItemSlot.ER, Item.EarMale() },
+                    { ItemSlot.HR, Item.HairMale() },
+                    { ItemSlot.FA, Item.FaceMale() },
+                    { ItemSlot.FD, Item.FaceDecorationMale() }
                 },
-                Stats = stats,
-                Stickers = new List<short>
-                {
-                    1, 2, 3, 4, 5, 6, 7
-                },
-                Emotes = new List<int>
-                {
-                    90200011, 90200004, 90200024, 90200041, 90200042,
-                90200057, 90200043, 90200022, 90200031, 90200005,
-                90200006, 90200003, 90200092, 90200077, 90200073,
-                90200023, 90200001, 90200019, 90200020, 90200021,
-                90200009, 90200027, 90200010, 90200028, 90200051,
-                90200015, 90200016, 90200055, 90200060, 90200017,
-                90200018, 90200093, 90220033, 90220012, 90220001, 90220033
-                },
-                TitleId = 10000503,
-                InsigniaId = 18,
-                Titles = new List<int> {
-                    10000569, 10000152, 10000570, 10000171, 10000196, 10000195, 10000571, 10000331, 10000190,
-                    10000458, 10000465, 10000503, 10000512, 10000513, 10000514, 10000537, 10000565, 10000602,
-                    10000603, 10000638, 10000644
-                }
+                Stats = stats
             };
-            player.Equips.Add(ItemSlot.RH, Item.TutorialBow(player));
+            player.Levels = new Levels(player, 1, 0, 0, 0, 0);
+
             return player;
         }
 
@@ -206,7 +188,6 @@ namespace MapleServer2.Types
                     { ItemSlot.FD, Item.FaceDecorationMale() },
                     { ItemSlot.CL, Item.CloathMale() },
                     { ItemSlot.SH, Item.ShoesMale() },
-
                 },
                 Stats = stats
             };

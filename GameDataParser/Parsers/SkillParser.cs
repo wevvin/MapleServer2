@@ -100,7 +100,7 @@ namespace GameDataParser.Parsers
                             {
                                 int id = int.Parse(skills.ChildNodes[i].Attributes["main"].Value);
                                 SkillMetadata skill = skillList.Find(x => x.SkillId == id); // This find the skill in the SkillList
-                                skill.Job = 999;
+                                skill.Job = 1;
                             }
                         }
                     }

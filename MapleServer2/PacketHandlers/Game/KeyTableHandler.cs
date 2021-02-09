@@ -24,6 +24,7 @@ namespace MapleServer2.PacketHandlers.Game
                     SetKeyBinds(session, packet);
                     break;
                 case 3:
+                case 4:
                     MoveQuickSlot(session, packet);
                     break;
                 case 5:

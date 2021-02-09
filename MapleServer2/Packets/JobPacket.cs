@@ -49,9 +49,26 @@ namespace MapleServer2.Packets
             // Ordered list of skill ids (must be sent in this order)
             List<int> ids = character.SkillTabs[0].Order;
             byte split = (byte) Enum.Parse<JobSkillSplit>(Enum.GetName(character.Job));
+            
+            if (split == 0x00)
+            {
+                // List of skills for given tab in format (byte zero) (byte learned) (int skill_id) (int skill_level) (byte zero)
+                foreach (int id in ids)
+                {
+                    pWriter.WriteByte();
+                    pWriter.WriteByte(skills[id].Learned);
+                    pWriter.WriteInt(id);
+                    pWriter.WriteInt(skills[id].SkillLevels.Select(x => x.Level).FirstOrDefault());
+                    pWriter.WriteByte();
+                }
+                pWriter.WriteShort(); // Ends with zero short
+                
+                return pWriter;
+            }
+
             int countId = ids[ids.Count - split]; // Split to last skill id
             pWriter.WriteByte((byte) (ids.Count - split)); // Skill count minus split
-
+                
             // List of skills for given tab in format (byte zero) (byte learned) (int skill_id) (int skill_level) (byte zero)
             foreach (int id in ids)
             {
@@ -66,7 +83,7 @@ namespace MapleServer2.Packets
                 pWriter.WriteByte();
             }
             pWriter.WriteShort(); // Ends with zero short
-
+            
             return pWriter;
         }
 

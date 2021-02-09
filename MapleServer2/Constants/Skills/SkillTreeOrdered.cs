@@ -108,7 +108,7 @@ namespace MapleServer2.Constants.Skills
         };
         private static readonly List<int> GameMaster = new List<int>
         {
-            0
+            20000001, 20000011, 10000001, 10000011, 10000041, 10000021, 10000031, 10000051, 10000061
         };
         #endregion
 
