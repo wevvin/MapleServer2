@@ -9,6 +9,7 @@ using MaplePacketLib2.Tools;
 using MapleServer2.Data.Static;
 using MapleServer2.Enums;
 using MapleServer2.Packets;
+using MapleServer2.Tools;
 using MapleServer2.Types;
 
 namespace MapleServer2.Servers.Game
@@ -40,7 +41,7 @@ namespace MapleServer2.Servers.Game
                 {
                     ZRotation = (short) (npc.Rotation.Z * 10)
                 });
-
+                
                 if (fieldNpc.Value.Friendly == 2)
                 {
                     fieldNpc.Coord = npc.Coord.ToFloat();
@@ -76,6 +77,11 @@ namespace MapleServer2.Servers.Game
                 actors.Add(RequestFieldObject(new InteractActor(actor.Uuid, actor.Name, actor.Type) { }));
             }
             AddInteractActor(actors);
+
+            // load and run trigger scripts
+            TriggerContext triggerContext = new TriggerContext();
+            TriggerScript triggerScript = new TriggerScript(triggerContext, start???);
+            
         }
 
         // Gets a list of packets to update the state of all field objects for client.
