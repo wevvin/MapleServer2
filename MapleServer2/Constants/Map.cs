@@ -1,6 +1,6 @@
 ﻿namespace MapleServer2.Constants
 {
-    public enum Map
+    public enum Map : int
     {
         AbandonedApartment = 52000071,
         AbandonedCharnelHouse = 2000082,

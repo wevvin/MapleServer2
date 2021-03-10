@@ -10,6 +10,8 @@ namespace Maple2Storage.Types.Metadata
         public int Id;
         [XmlElement(Order = 2)]
         public List<CoordS> Blocks = new List<CoordS>();
+        [XmlElement(Order = 3)]
+        public string TriggerName;
 
         public MapMetadata() { }
     }

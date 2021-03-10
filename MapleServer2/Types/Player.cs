@@ -37,6 +37,7 @@ namespace MapleServer2.Types
         // Mutable Values
         public Levels Levels { get; private set; }
         public int MapId;
+        public int PreviousMapId;
         public int TitleId;
         public List<int> Titles = new List<int> { 0 };
         public List<short> Insignias = new List<short> { 0 };
@@ -120,6 +121,8 @@ namespace MapleServer2.Types
             GameOptions = new GameOptions();
             Wallet = new Wallet(this);
             Levels = new Levels(this, 70, 0, 0, 100, 0, new List<MasteryExp>());
+            MapId = (int) Map.Tria;
+            PreviousMapId = (int) Map.Tria;
         }
 
         public static Player Char1(long accountId, long characterId, string name = "Char1")
@@ -137,6 +140,7 @@ namespace MapleServer2.Types
                 SkillTabs = skillTabs,
                 StatPointDistribution = statPointDistribution,
                 MapId = 2000062,
+                PreviousMapId = 2000062,
                 AccountId = accountId,
                 CharacterId = characterId,
                 Name = name,
@@ -196,6 +200,7 @@ namespace MapleServer2.Types
             {
                 SkillTabs = skillTabs,
                 MapId = mapId,
+                PreviousMapId = mapId,
                 AccountId = accountId,
                 CharacterId = characterId,
                 Name = name,
@@ -241,6 +246,7 @@ namespace MapleServer2.Types
                 Gender = gender,
                 Job = job,
                 MapId = 52000065,
+                PreviousMapId = 52000065,
                 Stats = stats,
                 SkinColor = skinColor,
                 Equips = (Dictionary<ItemSlot, Item>) equips,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Maple2Storage.Types;
 using Maple2Storage.Types.Metadata;
+using MapleServer2.Constants;
 using MapleServer2.Data.Static;
 using MapleServer2.Enums;
 using MapleServer2.Packets;
@@ -77,6 +78,12 @@ namespace MapleServer2.Tools
                         break;
                     }
                     MapleServer.BroadcastPacketAll(NoticePacket.Notice(args[1]));
+                    break;
+                case "ludi":
+                    ProcessLudibriumEscapeCommand(session, args.Length > 1 ? args[1] : "");
+                    break;
+                case "playerobjid":
+                    session.SendNotice(session.FieldPlayer.ObjectId.ToString());
                     break;
             }
         }
@@ -154,6 +161,30 @@ namespace MapleServer2.Tools
                 return;
             }
 
+            if (session.Player.MapId == mapId)
+            {
+                session.SendNotice("You are already on that map.");
+                return;
+            }
+
+            MapPlayerSpawn spawn = MapEntityStorage.GetRandomPlayerSpawn(mapId);
+
+            if (spawn != null)
+            {
+                session.Player.MapId = mapId;
+                session.Player.Coord = spawn.Coord.ToFloat();
+                session.Player.Rotation = spawn.Rotation.ToFloat();
+                session.Send(FieldPacket.RequestEnter(session.FieldPlayer));
+            }
+            else
+            {
+                session.SendNotice("Could not find coordinates to spawn on that map.");
+            }
+        }
+
+        private static void ProcessLudibriumEscapeCommand(GameSession session, string command)
+        {
+            int mapId = (int) Map.LudibriumEscape;
             if (session.Player.MapId == mapId)
             {
                 session.SendNotice("You are already on that map.");

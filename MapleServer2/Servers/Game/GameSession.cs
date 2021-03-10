@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using MaplePacketLib2.Tools;
 using MapleServer2.Enums;
@@ -49,6 +50,14 @@ namespace MapleServer2.Servers.Game
                         foreach (Packet update in FieldManager.GetUpdates())
                         {
                             Send(update);
+                        }
+
+                        if (FieldManager.Scripts != null)
+                        {
+                            foreach (TriggerScript script in FieldManager.Scripts)
+                            {
+                                script.Next();
+                            }
                         }
                     }
                     Thread.Sleep(1000);

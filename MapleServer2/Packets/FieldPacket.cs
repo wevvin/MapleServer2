@@ -346,5 +346,13 @@ namespace MapleServer2.Packets
 
             return pWriter;
         }
+        
+        public static Packet PlaySystemSound(string filename)
+        {
+            PacketWriter pWriter = PacketWriter.Of(SendOp.PLAY_SYSTEM_SOUND);
+            pWriter.WriteUnicodeString(filename);
+
+            return pWriter;
+        }
     }
 }

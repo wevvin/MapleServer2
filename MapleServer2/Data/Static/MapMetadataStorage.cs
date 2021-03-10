@@ -25,6 +25,11 @@ namespace MapleServer2.Data.Static
         {
             return map.GetValueOrDefault(mapId);
         }
+        
+        public static string GetTriggerName(int mapId)
+        {
+            return map.GetValueOrDefault(mapId)?.TriggerName;
+        }
 
         public static bool BlockExists(int mapId, CoordS coord)
         {

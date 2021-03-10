@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Maple2.Trigger;
 using Maple2Storage.Types;
 using Maple2Storage.Types.Metadata;
 using MaplePacketLib2.Tools;
+using MapleServer2.Constants;
 using MapleServer2.Data.Static;
 using MapleServer2.Enums;
 using MapleServer2.Packets;
@@ -25,6 +28,7 @@ namespace MapleServer2.Servers.Game
         public readonly CoordS[] BoundingBox;
         public readonly FieldState State = new FieldState();
         private readonly HashSet<GameSession> Sessions = new HashSet<GameSession>();
+        public readonly TriggerScript[] Scripts;
 
         private Task HealingSpotThread;
 
@@ -81,9 +85,16 @@ namespace MapleServer2.Servers.Game
             AddInteractActor(actors);
 
             // load and run trigger scripts
-            TriggerContext triggerContext = new TriggerContext();
-            TriggerScript triggerScript = new TriggerScript(triggerContext, start???);
-            
+            if (mapId == (int) Map.LudibriumEscape)
+            {
+                TriggerLoader triggerLoader = new TriggerLoader();
+                string mapName = MapMetadataStorage.GetTriggerName(mapId);
+                Scripts = triggerLoader.GetTriggers(mapName).Select(initializer => {
+                    TriggerContext context = new TriggerContext(this);
+                    TriggerState startState = initializer.Invoke(context);
+                    return new TriggerScript(context, startState);
+                }).ToArray();
+            }
         }
 
         // Gets a list of packets to update the state of all field objects for client.
@@ -180,6 +191,7 @@ namespace MapleServer2.Servers.Game
                 Sessions.Remove(sender);
             }
             State.RemovePlayer(player.ObjectId);
+            player.Value.PreviousMapId = sender.FieldManager.MapId;
 
             // Remove player
             Broadcast(session =>
@@ -219,7 +231,7 @@ namespace MapleServer2.Servers.Game
             BroadcastPacket(FieldPacket.AddPortal(portal));
         }
 
-        public void AddInteractActor(ICollection<IFieldObject<Types.InteractActor>> actors)
+        public void AddInteractActor(ICollection<IFieldObject<InteractActor>> actors)
         {
             foreach (IFieldObject<InteractActor> actor in actors)
             {

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Maple2Storage.Types;
 using Maple2Storage.Types.Metadata;
 using MapleServer2.Constants;
+using MapleServer2.Types;
 using ProtoBuf;
 
 namespace MapleServer2.Data.Static
@@ -42,6 +44,17 @@ namespace MapleServer2.Data.Static
         public static IEnumerable<MapPortal> GetPortals(int mapId)
         {
             return portals.GetValueOrDefault(mapId);
+        }
+        
+        public static void AddPortal(int mapId, IFieldObject<Portal> portal)
+        {
+            List<MapPortal> existingPortals = portals.GetValueOrDefault(mapId);
+            
+            MapPortalFlag flags = portal.Value.IsVisible ? MapPortalFlag.Visible : MapPortalFlag.None;
+            flags |= portal.Value.IsEnabled ? MapPortalFlag.Enabled : MapPortalFlag.None;
+            flags |= portal.Value.IsMinimapVisible ? MapPortalFlag.MinimapVisible : MapPortalFlag.None;
+            
+            existingPortals?.Add(new MapPortal(portal.Value.Id, flags, portal.Value.TargetMapId, CoordS.From(0,0,0), CoordS.From(0,0,0)));
         }
 
         public static IEnumerable<MapPlayerSpawn> GetPlayerSpawns(int mapId)

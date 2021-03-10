@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -30,6 +33,7 @@ namespace GameDataParser.Parsers
                 {
                     continue;
                 }
+
                 if (mapCubes.Contains(objStr))
                 {
                     continue;
@@ -46,7 +50,8 @@ namespace GameDataParser.Parsers
             List<MapMetadata> mapsList = new List<MapMetadata>();
             foreach (PackFileEntry entry in Resources.ExportedFiles.Where(x => x.Name.StartsWith("xblock/")))
             {
-                if (entry.Name.Contains("_cn.xblock") || entry.Name.Contains("_jp.xblock") || entry.Name.Contains("_kr.xblock"))
+                if (entry.Name.Contains("_cn.xblock") || entry.Name.Contains("_jp.xblock") ||
+                    entry.Name.Contains("_kr.xblock"))
                 {
                     continue;
                 }
@@ -59,6 +64,7 @@ namespace GameDataParser.Parsers
 
                 MapMetadata metadata = new MapMetadata();
                 metadata.Id = int.Parse(mapIdStr);
+                metadata.TriggerName = Path.GetFileNameWithoutExtension(entry.Name);
 
                 XmlDocument document = Resources.ExportedMemFile.GetDocument(entry.FileHeader);
                 XmlNodeList mapEntities = document.SelectNodes("/game/entitySet/entity");
@@ -71,12 +77,14 @@ namespace GameDataParser.Parsers
                     {
                         continue;
                     }
+
                     XmlNode fallReturn = node.SelectSingleNode("property[@name='IsFallReturn']");
                     bool isFallReturn = (fallReturn?.FirstChild.Attributes["value"].Value) != "False";
                     if (!isFallReturn)
                     {
                         continue;
                     }
+
                     string id = node.Attributes["id"].Value.ToLower();
                     XmlNode blockCoord = node.SelectSingleNode("property[@name='Position']");
                     CoordS coordS = CoordS.Parse(blockCoord?.FirstChild.Attributes["value"].Value ?? "0, 0, 0");
@@ -91,6 +99,7 @@ namespace GameDataParser.Parsers
                 metadata.Blocks.AddRange(blockList);
                 mapsList.Add(metadata);
             }
+
             return mapsList;
         }
     }

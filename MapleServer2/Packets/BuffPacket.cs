@@ -6,7 +6,7 @@ namespace MapleServer2.Packets
 {
     public static class BuffPacket
     {
-        private enum StatusMode : byte
+        public enum StatusMode : byte
         {
             Add = 0,
             Remove = 1,
