@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using Google.Protobuf.WellKnownTypes;
 using Maple2.Trigger;
 using Maple2.Trigger.Enum;
+using Maple2Storage.Types;
 using MapleServer2.Packets;
 using MapleServer2.Servers.Game;
 using MapleServer2.Types;
@@ -843,7 +845,6 @@ namespace MapleServer2.Tools
 
         public void ShowCountUI(string text = "", byte stage = 0, byte count = 0, byte soundType = 1)
         {
-            Console.WriteLine($"Not implemented: ShowCountUI: string text = {text}, byte stage = {stage}, byte count = {count}, byte soundType = {soundType}");
             FieldManager.BroadcastPacket(MassiveEventPacket.Round(text, stage, count, soundType));
         }
 
@@ -1146,10 +1147,43 @@ namespace MapleServer2.Tools
             return timer.GetCurrentInterval() == Timeout.Infinite;
         }
 
-        public bool UserDetected(int[] arg1 = null, byte arg2 = 0)
+        public bool UserDetected(int[] boxIds = null, byte arg2 = 0)
         {
-            //Console.WriteLine($"Not implemented: UserDetected - int[] arg1 = {string.Join(", ", arg1)}, byte arg2 = {arg2}");
-            return true;
+            Console.WriteLine($": UserDetected - int[] arg1 = {string.Join(", ", boxIds ?? Array.Empty<int>())}, byte arg2 = {arg2}");
+
+            foreach (int boxId in boxIds)
+            {
+                if (boxId == 102)
+                {
+                    CoordF boxMin = CoordF.From(825, -900, 11550);
+                    CoordF boxMax = CoordF.From(2325, -450, 11850);
+                
+                    foreach (IFieldObject<Player> player in FieldManager.State.Players.Values)
+                    {
+                        if (boxMin.X <= player.Coord.X && player.Coord.X <= boxMax.X && boxMin.Y <= player.Coord.Y &&
+                            player.Coord.Y <= boxMax.Y && boxMin.Z <= player.Coord.Z && player.Coord.Z <= boxMax.Z)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    CoordF boxMin = CoordF.From(-3275, -1225, 1500);
+                    CoordF boxMax = CoordF.From(-1625, -925, 1950);
+
+                    foreach (IFieldObject<Player> player in FieldManager.State.Players.Values)
+                    {
+                        if (boxMin.X <= player.Coord.X && player.Coord.X <= boxMax.X && boxMin.Y <= player.Coord.Y &&
+                            player.Coord.Y <= boxMax.Y && boxMin.Z <= player.Coord.Z && player.Coord.Z <= boxMax.Z)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            return false;
         }
 
         public bool WaitAndResetTick(int waitTick = 0)
@@ -1268,8 +1302,41 @@ namespace MapleServer2.Tools
 
         public int GetUserCount(int boxId = 0, int userTagId = 0)
         {
-            //return 1;
-            return 20;
+            Console.WriteLine($"GetUserCount: int boxId = {boxId}, int userTagId = {userTagId}");
+
+            int count = 0;
+            
+            if (boxId == 102)
+            {
+                CoordF boxMin = CoordF.From(825, -900, 11550);
+                CoordF boxMax = CoordF.From(2325, -450, 11850);
+                
+                foreach (IFieldObject<Player> player in FieldManager.State.Players.Values)
+                {
+                    if (boxMin.X <= player.Coord.X && player.Coord.X <= boxMax.X && boxMin.Y <= player.Coord.Y &&
+                        player.Coord.Y <= boxMax.Y && boxMin.Z <= player.Coord.Z && player.Coord.Z <= boxMax.Z)
+                    {
+                        count++;
+                    }
+                }
+            }
+            else
+            {
+                CoordF boxMin = CoordF.From(-3275, -1225, 1500);
+                CoordF boxMax = CoordF.From(-1625, -925, 1950);
+
+                foreach (IFieldObject<Player> player in FieldManager.State.Players.Values)
+                {
+                    if (boxMin.X <= player.Coord.X && player.Coord.X <= boxMax.X && boxMin.Y <= player.Coord.Y &&
+                        player.Coord.Y <= boxMax.Y && boxMin.Z <= player.Coord.Z && player.Coord.Z <= boxMax.Z)
+                    {
+                        count++;
+                    }
+                }
+            }
+            
+            Console.WriteLine($"UserCount: {count}");
+            return count;
         }
 
         public int GetUserValue(string key)

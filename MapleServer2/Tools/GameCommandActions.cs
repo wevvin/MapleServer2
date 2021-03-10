@@ -85,6 +85,32 @@ namespace MapleServer2.Tools
                 case "playerobjid":
                     session.SendNotice(session.FieldPlayer.ObjectId.ToString());
                     break;
+                case "boxcheck":
+                    ProcessBoxMap(session);
+                    break;
+            }
+        }
+
+        private static void ProcessBoxMap(GameSession session)
+        {
+            
+            CoordF boxMin = CoordF.From(825, -900, 11550);
+            CoordF boxMax = CoordF.From(2325, -450, 11850);
+
+            CoordF playerCoords = session.Player.Coord;
+            
+            Console.WriteLine($"Box Min: {boxMin.ToString()}");
+            Console.WriteLine($"Box Max: {boxMax.ToString()}");
+            Console.WriteLine($"Player: {playerCoords.ToString()}");
+
+            if (boxMin.X <= playerCoords.X && playerCoords.X <= boxMax.X && boxMin.Y <= playerCoords.Y &&
+                playerCoords.Y <= boxMax.Y && boxMin.Z <= playerCoords.Z && playerCoords.Z <= boxMax.Z)
+            {
+                Console.WriteLine($"Player IS within the box");
+            }
+            else
+            {
+                Console.WriteLine($"Player IS NOT within the box");
             }
         }
 
